@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>清林沐枫 1024 Group - 主页</title>
+    <meta name="description" content="清林沐枫 1024 Group 临时官方网站">
+    <!--
+    ================================================================================
+    设计风格：现代拟态 (Neumorphism / Soft UI)
+    编写方法说明：
+    1. 通过 box-shadow 创建光源效果：右上角亮色阴影 + 左下角暗色阴影。
+    2. 背景色与元素背景色保持一致或接近，形成“柔软”的视觉感受。
+    3. 元素边缘使用多层阴影模拟凸起（凸出）或凹陷（按下），凸出时亮阴影在左上，暗阴影在右下。
+    4. 圆角半径较大（border-radius ≥ 12px），增强柔和感。
+    5. 色彩选择低饱和度，白天模式以浅灰、米白为主，黑夜模式以深灰蓝为主。
+    6. 交互状态通过阴影变化实现：悬停时亮暗阴影距离增大，产生“浮起”效果；点击时阴影内收，模拟“按下”。
+    7. 导航栏采用半透明背景 + 背景模糊，保持拟态一致。
+    8. 按钮及卡片均遵循拟态原则，避免使用边框，完全依靠阴影表达层次。
+    ================================================================================
+    -->
+    <style>
+        /* =========================== CSS 变量：白天/黑夜双主题 =========================== */
+        :root {
+            --bg: #e8edf2;                     
+            --card-bg: #e8edf2;                 
+            --text-primary: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --text-heading: #1a2634;
+            --accent: #5b8c5a;                 
+            --accent-light: #6ea86e;
+            --shadow-light: #ffffff;           
+            --shadow-dark: #c8d0d9;             
+            --nav-bg: rgba(232,237,242,0.85);  
+            --footer-bg: #d2d8e0;
+            --footer-text: #4a5568;
+            --toggle-bg: #e8edf2;
+        }
+
+        html.dark-mode {
+            --bg: #1e242c;
+            --card-bg: #1e242c;
+            --text-primary: #d3d9e3;
+            --text-secondary: #a0aab4;
+            --text-heading: #e2e8f0;
+            --accent: #7db38b;
+            --accent-light: #93c89d;
+            --shadow-light: #2a323b;           
+            --shadow-dark: #111418;           
+            --nav-bg: rgba(30,36,44,0.85);
+            --footer-bg: #171b22;
+            --footer-text: #8899aa;
+            --toggle-bg: #1e242c;
+        }
+
+        /* =========================== 全局重置与基础 =========================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-primary);
+            line-height: 1.65;
+            transition: background-color 0.4s ease, color 0.4s ease;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* =========================== 导航栏  =========================== */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: var(--nav-bg);
+            backdrop-filter: blur(12px);
+            box-shadow:
+                6px 6px 12px var(--shadow-dark),
+                -6px -6px 12px var(--shadow-light);
+            padding: 0 2rem;
+            transition: background-color 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 68px;
+        }
+
+        /* Logo */
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .nav-logo img {
+            height: 40px;
+            width: auto;
+            border-radius: 12px;               
+            box-shadow:
+                3px 3px 6px var(--shadow-dark),
+                -3px -3px 6px var(--shadow-light);
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+        }
+
+        .nav-logo img:hover {
+            transform: scale(1.05);
+            box-shadow:
+                4px 4px 8px var(--shadow-dark),
+                -4px -4px 8px var(--shadow-light);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            display: block;
+            padding: 0.55rem 1.3rem;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.93rem;
+            border-radius: 14px;              
+            transition: all 0.3s ease;
+            background: transparent;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+            background: var(--card-bg);
+            box-shadow:
+                2px 2px 5px var(--shadow-dark),
+                -2px -2px 5px var(--shadow-light);
+        }
+
+        .nav-links a.active {
+            color: var(--accent);
+            font-weight: 700;
+            background: var(--card-bg);
+            box-shadow:
+                inset 2px 2px 5px var(--shadow-dark),
+                inset -2px -2px 5px var(--shadow-light);
+        }
+
+        .theme-toggle {
+            background: var(--toggle-bg);
+            border: none;
+            cursor: pointer;
+            font-size: 1.3rem;
+            padding: 10px 16px;
+            border-radius: 20px;              
+            margin-left: 1rem;
+            flex-shrink: 0;
+            line-height: 1;
+            transition: all 0.3s ease;
+            box-shadow:
+                4px 4px 8px var(--shadow-dark),
+                -4px -4px 8px var(--shadow-light);
+        }
+
+        .theme-toggle:hover {
+            box-shadow:
+                6px 6px 12px var(--shadow-dark),
+                -6px -6px 12px var(--shadow-light);
+        }
+
+        .theme-toggle:active {
+            box-shadow:
+                inset 3px 3px 6px var(--shadow-dark),
+                inset -3px -3px 6px var(--shadow-light);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: var(--toggle-bg);
+            border: none;
+            font-size: 1.6rem;
+            cursor: pointer;
+            color: var(--text-primary);
+            padding: 8px 14px;
+            border-radius: 14px;
+            box-shadow:
+                3px 3px 6px var(--shadow-dark),
+                -3px -3px 6px var(--shadow-light);
+            transition: box-shadow 0.3s;
+        }
+
+        .mobile-menu-btn:active {
+            box-shadow:
+                inset 3px 3px 6px var(--shadow-dark),
+                inset -3px -3px 6px var(--shadow-light);
+        }
+
+        /* =========================== 主要内容区域 =========================== */
+        .main-content {
+            flex: 1;
+            max-width: 1100px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: var(--text-heading);
+            margin-bottom: 0.5rem;
+            text-shadow:
+                1px 1px 1px var(--shadow-light),
+                -1px -1px 1px var(--shadow-dark);
+        }
+
+        .hero .subtitle {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-tags {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-tags span {
+            background: var(--card-bg);
+            color: var(--accent);
+            padding: 0.45rem 1.2rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            /* 拟态凸起标签 */
+            box-shadow:
+                3px 3px 6px var(--shadow-dark),
+                -3px -3px 6px var(--shadow-light);
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+        }
+
+        .hero-tags span:hover {
+            transform: translateY(-2px);
+            box-shadow:
+                5px 5px 10px var(--shadow-dark),
+                -5px -5px 10px var(--shadow-light);
+        }
+
+        /* 装饰分割线（使用拟态凹陷线条） */
+        .divider {
+            width: 80px;
+            height: 5px;
+            margin: 1.8rem auto;
+            border-radius: 5px;
+            /* 凹陷效果，模拟刻痕 */
+            background: var(--bg);
+            box-shadow:
+                inset 2px 2px 4px var(--shadow-dark),
+                inset -2px -2px 4px var(--shadow-light);
+        }
+
+        /* 区块标题 */
+        .section-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-heading);
+            margin: 2.5rem 0 1.2rem;
+            padding-left: 1.2rem;
+            /* 左侧装饰：拟态凸起竖条 */
+            border-left: 5px solid var(--accent);
+            border-radius: 3px;
+            box-shadow: none;
+            line-height: 1.2;
+        }
+
+        /* 卡片网格 */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 24px;               
+            padding: 2rem 1.8rem;
+            box-shadow:
+                8px 8px 16px var(--shadow-dark),
+                -8px -8px 16px var(--shadow-light);
+            transition: all 0.4s ease;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow:
+                12px 12px 24px var(--shadow-dark),
+                -12px -12px 24px var(--shadow-light);
+        }
+
+        .card-icon {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .card h3 {
+            font-size: 1.3rem;
+            color: var(--text-heading);
+            margin-bottom: 0.7rem;
+            font-weight: 700;
+        }
+
+        .card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1.2rem;
+        }
+
+        .card a {
+            display: inline-block;
+            margin-top: 0.5rem;
+            padding: 0.5rem 1.5rem;
+            background: var(--accent);
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border-radius: 30px;
+            box-shadow:
+                inset 2px 2px 4px rgba(0,0,0,0.15),
+                inset -2px -2px 4px rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .card a:hover {
+            background: var(--accent-light);
+            box-shadow:
+                4px 4px 8px var(--shadow-dark),
+                -4px -4px 8px var(--shadow-light);
+        }
+
+        .news-list {
+            list-style: none;
+            background: var(--bg);
+            border-radius: 24px;
+            padding: 1.5rem;
+            box-shadow:
+                inset 6px 6px 12px var(--shadow-dark),
+                inset -6px -6px 12px var(--shadow-light);
+        }
+
+        .news-list li {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        html.dark-mode .news-list li {
+            border-bottom-color: rgba(255,255,255,0.05);
+        }
+
+        .news-list li:last-child {
+            border-bottom: none;
+        }
+
+        .news-date {
+            background: var(--accent);
+            color: #fff;
+            padding: 0.25rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            white-space: nowrap;
+            flex-shrink: 0;
+            box-shadow:
+                2px 2px 4px rgba(0,0,0,0.15),
+                -1px -1px 3px rgba(255,255,255,0.2);
+        }
+
+        .site-footer {
+            background: var(--footer-bg);
+            color: var(--footer-text);
+            text-align: center;
+            padding: 2rem 1rem;
+            font-size: 0.9rem;
+            margin-top: 2rem;
+            transition: background-color 0.4s ease;
+            box-shadow:
+                0 -6px 12px var(--shadow-dark),
+                0 6px 12px var(--shadow-light);
+        }
+
+        .site-footer a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .site-footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-wrap: wrap;
+                height: auto;
+                padding: 0.8rem 0;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                gap: 0.3rem;
+                padding-top: 1rem;
+            }
+
+            .nav-links.show {
+                display: flex;
+            }
+
+            .nav-links a {
+                text-align: center;
+            }
+
+            .theme-toggle {
+                margin-left: auto;
+                margin-right: 0.5rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 1.6rem;
+            }
+            .card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ==================== 导航栏 ==================== -->
+    <nav class="navbar" role="navigation" aria-label="主导航">
+        <div class="nav-container">
+            <!-- Logo -->
+            <a href="index.html" class="nav-logo" title="返回首页">
+                <!-- logo图片位于网站同目录下的 logo 文件夹中 -->
+                <img src="logo/logo.jpg" alt="Logo"
+                     onerror="this.style.display='none';this.nextElementSibling.style.display='block';"
+                     loading="eager">
+                <span class="logo-text" style="display:none; font-weight:700; color:var(--accent); font-size:1.2rem;">清林沐枫</span>
+            </a>
+
+            <!-- 移动端菜单按钮 -->
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="菜单" title="展开菜单">☰</button>
+
+            <!-- 页面导航 -->
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html" class="active" aria-current="page">🏠 主页</a></li>
+                <!--<li><a href="tech-notes.html">📝 技术笔记</a></li>
+                <li><a href="other.html">📂 其他页面</a></li>
+                <li><a href="about.html">👥 关于我们</a></li> -->
+            </ul>
+
+            <!-- 白天/黑夜模式切换 -->
+            <button class="theme-toggle" id="themeToggle" aria-label="切换主题" title="切换白天/黑夜模式">🌙</button>
+        </div>
+    </nav>
+
+    <!-- ==================== 主内容 ==================== -->
+    <main class="main-content">
+        <section class="hero">
+            <h1>清林沐枫 1024 Group</h1>
+            <p class="subtitle"></p>
+            </div> 1024 Group是清林沐枫下属技术站
+            <div class="divider"></div>
+            <p style="color:var(--text-secondary); max-width:650px; margin:0 auto;">
+               专注于Windows系统相关、装机方案、数码体验等内容,欢迎各位了解uwu
+            </p>
+        </section>
+
+        <!-- 核心板块 -->
+        <h2 class="section-title">📌 核心板块</h2>
+        <div class="card-grid">
+            <div class="card">
+                <span class="card-icon">🔧</span>
+                <h3>WinPE</h3>
+                <p>系统维护时必不可少的工具</p>
+                <p>尽情期待</p>
+                <!--<a href="tech-notes.html">了解详情 →</a>-->
+            </div>
+            <div class="card">
+                <span class="card-icon">💻</span>
+                <h3>装机专区</h3>
+                <p>手机、笔电、穿戴设备，最新体验分享。</p>
+                <p>尽情期待</p>
+                <!--<a href="tech-notes.html">了解详情 →</a>-->
+            </div>
+        </div>
+        <!-- 最新动态 -->
+        <h2 class="section-title">📢 最新动态</h2>
+        <ul class="news-list">
+            <li><span class="news-date">2026-05-02</span>本站临时页面在Github部署成功</li>
+        </ul>
+    </main>
+
+    <!-- ==================== 页脚 ==================== -->
+    <footer class="site-footer">
+        <p>&copy; 2026 <strong>清林沐枫 1024 Group</strong> | 专注计算机硬件与数码科技</p>
+        <p style="margin-top:0.5rem;">
+            <a href="index.html">主页</a> ·
+            <a href="tech-notes.html">其他1</a> ·
+            <a href="other.html">其他页面2</a> ·
+            <a href="about.html">1024站长主页</a>
+        </p>
+        <p style="margin-top:0.5rem; font-size:0.8rem;">
+            本人技术力低,故页面采用Deepseek辅助编写qwq
+        </p>
+    </footer>
+
+    <!-- ==================== JavaScript：主题切换与移动端菜单 ==================== -->
+    <script>
+        (function() {
+            const themeToggle = document.getElementById('themeToggle');
+            const htmlElement = document.documentElement;
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const navLinks = document.getElementById('navLinks');
+            const STORAGE_KEY = 'qinglin_neu_theme'; // localStorage 存储键
+
+            function getTimeBasedTheme() {
+                const hour = new Date().getHours();
+                // 6:00 - 17:59 为白天，18:00 - 5:59 为黑夜
+                return (hour >= 6 && hour < 18) ? 'light' : 'dark';
+            }
+
+            function applyTheme(theme, saveToStorage = true) {
+                if (theme === 'dark') {
+                    htmlElement.classList.add('dark-mode');
+                    themeToggle.textContent = '☀️';  
+                    themeToggle.setAttribute('aria-label', '切换到白天模式');
+                } else {
+                    htmlElement.classList.remove('dark-mode');
+                    themeToggle.textContent = '🌙'; 
+                    themeToggle.setAttribute('aria-label', '切换到黑夜模式');
+                }
+
+                if (saveToStorage) {
+                    try {
+                        localStorage.setItem(STORAGE_KEY, theme);
+                    } catch (e) {
+                        // 忽略存储错误
+                    }
+                }
+            }
+
+            function initTheme() {
+                let savedTheme = null;
+                try { savedTheme = localStorage.getItem(STORAGE_KEY); } catch (e) {}
+                if (savedTheme === 'dark' || savedTheme === 'light') {
+                    // 用户之前手动设置过，使用其偏好
+                    applyTheme(savedTheme, false);
+                } else {
+                    // 首次访问，根据时间自动设置
+                    applyTheme(getTimeBasedTheme(), true);
+                }
+            }
+
+            // ----- 手动切换主题 -----
+            themeToggle.addEventListener('click', function() {
+                const currentlyDark = htmlElement.classList.contains('dark-mode');
+                const newTheme = currentlyDark ? 'light' : 'dark';
+                applyTheme(newTheme, true);
+            });
+
+            // ----- 移动端菜单 -----
+            mobileMenuBtn.addEventListener('click', function() {
+                const isShown = navLinks.classList.toggle('show');
+                this.textContent = isShown ? '✕' : '☰';
+                this.setAttribute('aria-label', isShown ? '关闭菜单' : '打开菜单');
+            });
+
+            // ----- 页面加载时执行初始化 -----
+            initTheme();
+
+            // ----- 定时检查时间，自动切换（仅当用户未手动设置时）-----
+            setInterval(function() {
+                let userPref = null;
+                try { userPref = localStorage.getItem(STORAGE_KEY); } catch (e) {}
+                const timeTheme = getTimeBasedTheme();
+                const isDark = htmlElement.classList.contains('dark-mode');
+                if ((timeTheme === 'dark') !== isDark && userPref === (isDark ? 'dark' : 'light')) {
+                    applyTheme(timeTheme, true);
+                }
+            }, 60000); // 每60秒检测一次
+
+            console.log('✅ 清林沐枫 1024 Group 主页已加载');
+        })();
+    </script>
+</body>
+</html>
